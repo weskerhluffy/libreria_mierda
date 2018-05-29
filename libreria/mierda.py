@@ -3,6 +3,8 @@ Created on 29/05/2018
 
 @author: ernesto
 '''
+# XXX: https://coderpad.io/4HNMFFYG
+
 
 """
 Given a flat file of book metadata, write a Library class that parses the book data and provides an API that lets you search for all books containing a word.
