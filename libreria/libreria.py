@@ -87,13 +87,15 @@ class Library:
             lines=book_str.split("\n")
 #            print("lineas {}".format(lines))
             book={}
+            last_attr_name=None
             for line in filter(lambda l:l.strip(),lines):
 #                print("linea {}".format(line))
                 if ":" in line:
                     attr_name, attr_value=line.split(":")
                     book[attr_name.strip()]=attr_value.strip()
+                    last_attr_name=attr_name
                 else:
-                    book["DESCRIPTION"]+=line
+                    book[last_attr_name]+=line
             self.books.append(Book(book["TITLE"],book["AUTHOR"],book["DESCRIPTION"]))
             
     def _create_word_to_book(self):
