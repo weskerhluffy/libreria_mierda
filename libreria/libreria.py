@@ -5,6 +5,7 @@ Created on 29/05/2018
 '''
 # XXX: https://coderpad.io/4HNMFFYG
 
+from re import split
 
 """
 Given a flat file of book metadata, write a Library class that parses the book data and provides an API that lets you search for all books containing a word.
@@ -76,43 +77,24 @@ class Library:
         self._create_word_to_book()
 
     def _parse_books(self):
-        # return [["title","author","description"],[],[]]
-        # split using newline
-        # whenever there is AUTHOR..., start accumulate.
-        # Finish accumulation when there is a line with newline alone or with TITLE/AUTHOR...
-        # if newline alone, it means a new book
-        lines = self.data.split("\n")
-        lines_sz = len(lines)
-        i = 0
-        books = []
-        while i < lines_sz:
-            book = [[], [], []]
-            accum = []
-            bc = False
-            j = 0
-            for j in range(i, lines_sz):
-                line = lines[j]
-#                print("linea @@@@ {}".format(line[:10]))
-                if match(r"^AUTHOR:", line):
-                    book[0] = sub(r"^TITLE:", "", " ".join(accum)).strip()
-                    accum = []
-                if match(r"^DESCRIPTION:", line):
-                    book[1] = sub(r"AUTHOR:", "", " ".join(accum)).strip()
-                    accum = []
-                if not line.strip():
-                    book[2] = sub(r"^DESCRIPTION:", "", " ".join(accum)).strip()
-                    bc = True
-                accum.append(line)
-                j += 1
-                if bc:
-                    break
-            i = j
-
-#            print("aora {}".format(i))
-            if book[0]:
-                books.append(Book(book[0], book[1], book[2]))
-#        print(books)
-        self.books = books
+#        book_strs=self.data.split("\n\n")
+        self.books=[]
+        book_strs=split(r"\n\n",self.data)
+#        print("libros {}".format(book_strs))
+        for book_str in book_strs:
+            if not book_str.strip():
+                continue
+            lines=book_str.split("\n")
+#            print("lineas {}".format(lines))
+            book={}
+            for line in filter(lambda l:l.strip(),lines):
+#                print("linea {}".format(line))
+                if ":" in line:
+                    attr_name, attr_value=line.split(":")
+                    book[attr_name.strip()]=attr_value.strip()
+                else:
+                    book["DESCRIPTION"]+=line
+            self.books.append(Book(book["TITLE"],book["AUTHOR"],book["DESCRIPTION"]))
             
     def _create_word_to_book(self):
         books = self.books
